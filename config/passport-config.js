@@ -1,9 +1,7 @@
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
 
-function initialize(passport) {
+function initialize(passport, prisma) {
 	async function authenticateUser(email, password, done) {
 		try {
 			const user = await prisma.user.findUnique({ where: { email } });
@@ -25,12 +23,7 @@ function initialize(passport) {
 		}
 	}
 
-	passport.use(
-		new LocalStrategy(
-			{ usernameField: 'email', passReqToCallback: true },
-			authenticateUser
-		)
-	);
+	passport.use(new LocalStrategy({ usernameField: 'email' }, authenticateUser));
 
 	// Passport serialization
 	passport.serializeUser((user, done) => {

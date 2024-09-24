@@ -25,7 +25,12 @@ function initialize(passport) {
 		}
 	}
 
-	passport.use(new LocalStrategy({ usernameField: 'email' }, authenticateUser));
+	passport.use(
+		new LocalStrategy(
+			{ usernameField: 'email', passReqToCallback: true },
+			authenticateUser
+		)
+	);
 
 	// Passport serialization
 	passport.serializeUser((user, done) => {

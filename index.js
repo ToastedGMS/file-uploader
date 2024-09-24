@@ -47,6 +47,8 @@ const loginRoute = require('./routes/login');
 app.use('/login', loginRoute);
 const dashboardRoute = require('./routes/dashboard');
 app.use('/dashboard', dashboardRoute);
+const logoutRoute = require('./routes/logout');
+app.use('/logout', logoutRoute);
 
 // Start server
 const PORT = process.env.PORT || 3000;

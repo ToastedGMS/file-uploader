@@ -18,6 +18,7 @@ app.use(
 		secret: process.env.SESSION_SECRET || 'secret_key_lmao',
 		resave: false,
 		saveUninitialized: false,
+		cookie: { secure: false },
 	})
 );
 app.use(flash());
@@ -35,6 +36,8 @@ const homeRoute = require('./routes/home');
 app.use('/', homeRoute);
 const signupRoute = require('./routes/signup');
 app.use('/signup', signupRoute);
+const loginRoute = require('./routes/login');
+app.use('/login', loginRoute);
 
 // Start server
 const PORT = process.env.PORT || 3000;

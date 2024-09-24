@@ -3,10 +3,13 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const initialize = require('./config/passport-config');
-const flash = require('express-flash');
+const flash = require('connect-flash');
+const { PrismaClient } = require('@prisma/client');
+const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
+const prisma = new PrismaClient();
 
 const app = express();
-initialize(passport);
+initialize(passport, prisma);
 
 // Middleware
 app.set('view engine', 'ejs');
@@ -18,7 +21,11 @@ app.use(
 		secret: process.env.SESSION_SECRET || 'secret_key_lmao',
 		resave: false,
 		saveUninitialized: false,
-		cookie: { secure: false },
+		store: new PrismaSessionStore(prisma, {
+			checkPeriod: 2 * 60 * 1000, //ms
+			dbRecordIdIsSessionId: true,
+			dbRecordIdFunction: undefined,
+		}),
 	})
 );
 app.use(flash());
@@ -38,6 +45,8 @@ const signupRoute = require('./routes/signup');
 app.use('/signup', signupRoute);
 const loginRoute = require('./routes/login');
 app.use('/login', loginRoute);
+const dashboardRoute = require('./routes/dashboard');
+app.use('/dashboard', dashboardRoute);
 
 // Start server
 const PORT = process.env.PORT || 3000;

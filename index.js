@@ -31,6 +31,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
+const homeRoute = require('./routes/home');
+app.use('/', homeRoute);
+const signupRoute = require('./routes/signup');
+app.use('/signup', signupRoute);
 
 // Start server
 const PORT = process.env.PORT || 3000;

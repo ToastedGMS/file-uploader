@@ -49,7 +49,8 @@ const dashboardRoute = require('./routes/dashboard');
 app.use('/dashboard', dashboardRoute);
 const logoutRoute = require('./routes/logout');
 app.use('/logout', logoutRoute);
-
+const uploadRoute = require('./routes/upload');
+app.use('/upload', uploadRoute);
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -3,15 +3,27 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Upload</title>
+		<title>File Upload</title>
+		<style>
+			.error-message {
+				color: red;
+			}
+			.success-message {
+				color: green;
+			}
+		</style>
 	</head>
 	<body>
 		<h1>Upload a File</h1>
 
+		<!-- Display error message if it exists -->
 		<% if (messages.error) { %>
-		<div style="color: red"><%= messages.error %></div>
-		<% } %> <% if (messages.success) { %>
-		<div style="color: green"><%= messages.success %></div>
+		<p class="error-message"><%= messages.error %></p>
+		<% } %>
+
+		<!-- Display success message if it exists -->
+		<% if (messages.success) { %>
+		<p class="success-message"><%= messages.success %></p>
 		<% } %>
 
 		<form action="/upload" method="POST" enctype="multipart/form-data">

@@ -6,18 +6,19 @@ function getSignupView(req, res) {
 
 async function createUser(req, res) {
 	const { email, password, password2 } = req.body;
+	const messages = { error: null, success: null };
 
 	if (password != password2) {
-		req.flash('error', 'Passwords do not match');
+		messages.error = 'Passwords do not match';
 		return res.render('signup');
 	}
 
 	try {
 		const newUser = await addUserToDatabase(email, password);
-		req.flash('success', 'User created successfully!');
+		messages.success = 'User created successfully!';
 		res.redirect('/login');
 	} catch (error) {
-		req.flash('error', 'User creation failed.');
+		messages.error = 'User creation failed.';
 		res.render('signup');
 	}
 }

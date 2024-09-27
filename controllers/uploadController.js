@@ -8,19 +8,21 @@ function getUploadView(req, res) {
 		res.redirect('/login');
 	}
 }
-
 function handleUploadResponse(req, res) {
 	upload.single('file')(req, res, function (error) {
+		const messages = { error: null, success: null };
+
 		if (error) {
-			req.flash('error', 'Unexpected error.');
-			return res.render('upload');
+			messages.error = 'Unexpected error occurred.';
+			return res.render('upload', { messages });
 		}
 		if (!req.file) {
-			req.flash('error', 'No file found.');
-			return res.render('upload');
+			messages.error = 'No file found.';
+			return res.render('upload', { messages });
 		}
-		req.flash('success', 'File uploaded successfully.');
-		return res.render('upload');
+
+		messages.success = 'File uploaded successfully.';
+		return res.render('upload', { messages });
 	});
 }
 

@@ -1,5 +1,20 @@
 const multer = require('multer');
-const upload = multer({ dest: '/home/gabrielmgs/repos/file-uploader/uploads' });
+const path = require('path');
+
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, './uploads');
+	},
+	filename: (req, file, cb) => {
+		const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9); // Unique suffix
+		const ext = path.extname(file.originalname); // Original file extension
+		const name = path.basename(file.originalname, ext); // Original filename without extension
+		cb(null, `${name}-${uniqueSuffix}${ext}`); // New filename
+	},
+});
+
+// Initialize multer with the custom storage
+const upload = multer({ storage: storage });
 
 function getUploadView(req, res) {
 	if (req.isAuthenticated()) {
@@ -8,6 +23,7 @@ function getUploadView(req, res) {
 		res.redirect('/login');
 	}
 }
+
 function handleUploadResponse(req, res) {
 	upload.single('file')(req, res, function (error) {
 		const messages = { error: null, success: null };
@@ -21,7 +37,7 @@ function handleUploadResponse(req, res) {
 			return res.render('upload', { messages });
 		}
 
-		messages.success = 'File uploaded successfully.';
+		messages.success = `File uploaded successfully: ${req.file.filename}`;
 		return res.render('upload', { messages });
 	});
 }

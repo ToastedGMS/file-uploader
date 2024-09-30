@@ -1,5 +1,6 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
@@ -42,4 +43,18 @@ function handleUploadResponse(req, res) {
 	});
 }
 
-module.exports = { getUploadView, handleUploadResponse };
+function createFolder(req, res) {
+	fs.mkdir(`./uploads/${req.body.dir}`, { recursive: true }, (err) => {
+		const messages = { error: null, success: null };
+
+		if (err) {
+			messages.error = `Error creating folder: ${err.message}`;
+		} else {
+			messages.success = `Folder created successfully: /${req.body.dir}`;
+		}
+
+		// Pass messages to the 'upload' view
+		return res.render('upload', { messages });
+	});
+}
+module.exports = { getUploadView, handleUploadResponse, createFolder };

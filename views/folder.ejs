@@ -6,8 +6,10 @@
 		<title>Folders</title>
 	</head>
 	<body>
-		<% if (files) { %> <% files.forEach(element => { %>
+		<% if (files && files.length > 0) { %> <% files.forEach(element => { %>
 		<div><%= element %></div>
-		<% }); %> <% } %>
+		<% }); %> <% } else { %>
+		<div><p>There's nothing here...</p></div>
+		<% } %>
 	</body>
 </html>

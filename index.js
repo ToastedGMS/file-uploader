@@ -12,6 +12,7 @@ const app = express();
 initialize(passport, prisma);
 
 // Middleware
+global.currentFolder = './uploads';
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));

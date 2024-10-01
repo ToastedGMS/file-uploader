@@ -52,6 +52,8 @@ const logoutRoute = require('./routes/logout');
 app.use('/logout', logoutRoute);
 const uploadRoute = require('./routes/upload');
 app.use('/upload', uploadRoute);
+const folderRoute = require('./routes/folders');
+app.use('/folder', folderRoute);
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

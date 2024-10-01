@@ -57,20 +57,8 @@ function createFolder(req, res) {
 	});
 }
 
-function getFolderContent(req, res) {
-	const folder = './uploads';
-
-	fs.readdir(folder, (err, files) => {
-		if (err) {
-			return res.status(500).send('Unable to scan folder: ' + err);
-		}
-		console.log('files:', files);
-	});
-}
-
 module.exports = {
 	getUploadView,
 	handleUploadResponse,
 	createFolder,
-	getFolderContent,
 };

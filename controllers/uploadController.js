@@ -4,7 +4,7 @@ const fs = require('fs');
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
-		cb(null, './uploads');
+		cb(null, currentFolder);
 	},
 	filename: (req, file, cb) => {
 		const ext = path.extname(file.originalname); // Original file extension
@@ -56,4 +56,21 @@ function createFolder(req, res) {
 		return res.render('upload', { messages });
 	});
 }
-module.exports = { getUploadView, handleUploadResponse, createFolder };
+
+function getFolderContent(req, res) {
+	const folder = './uploads';
+
+	fs.readdir(folder, (err, files) => {
+		if (err) {
+			return res.status(500).send('Unable to scan folder: ' + err);
+		}
+		console.log('files:', files);
+	});
+}
+
+module.exports = {
+	getUploadView,
+	handleUploadResponse,
+	createFolder,
+	getFolderContent,
+};

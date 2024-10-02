@@ -37,19 +37,19 @@ function handleUploadResponse(req, res) {
 			return res.render('upload', { messages });
 		}
 
-		messages.success = `File uploaded successfully: ${req.file.filename}`;
+		messages.success = `File uploaded successfully: ${req.file.filename} to ${currentFolder}`;
 		return res.render('upload', { messages });
 	});
 }
 
 function createFolder(req, res) {
-	fs.mkdir(`./uploads/${req.body.dir}`, { recursive: true }, (err) => {
+	fs.mkdir(`${currentFolder}/${req.body.dir}`, { recursive: true }, (err) => {
 		const messages = { error: null, success: null };
 
 		if (err) {
 			messages.error = `Error creating folder: ${err.message}`;
 		} else {
-			messages.success = `Folder created successfully: /${req.body.dir}`;
+			messages.success = `Folder created successfully: ${currentFolder}/${req.body.dir}`;
 		}
 
 		// Pass messages to the 'upload' view

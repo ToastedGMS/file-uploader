@@ -12,6 +12,7 @@ const app = express();
 initialize(passport, prisma);
 
 // Middleware
+global.folderHistory = [];
 global.currentFolder = './uploads';
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));

@@ -4,6 +4,8 @@ const util = require('util');
 // Convert fs.readdir into a function that returns a promise (for using async/await consistently)
 const readdir = util.promisify(fs.readdir);
 
+const messages = { error: null, success: null };
+
 async function getNewFolder(req, res) {
 	// Push the current folder onto the stack before navigating
 	folderHistory.push(currentFolder);
@@ -30,6 +32,10 @@ async function getFolderView(req, res) {
 			res.render('folder', { files });
 		} catch (err) {
 			if (err.code === 'ENOENT') {
+				currentFolder = './uploads';
+				folderHistory = []; // Clear the folder history
+				return await getFolderView(req, res);
+			} else if (err.code === 'ENOTDIR') {
 				currentFolder = './uploads';
 				folderHistory = []; // Clear the folder history
 				return await getFolderView(req, res);

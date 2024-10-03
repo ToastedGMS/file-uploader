@@ -45,5 +45,15 @@
 			<input type="text" name="dir" id="dir" />
 			<button type="submit">Create Folder</button>
 		</form>
+
+		<form action="/folder/rename-dir" method="post">
+			<label for="rename">New Folder Name</label>
+			<input type="text" name="rename" id="rename" />
+			<button type="submit">Rename</button>
+		</form>
+
+		<form action="/folder/remove-dir" method="post">
+			<button type="submit">Delete Folder</button>
+		</form>
 	</body>
 </html>

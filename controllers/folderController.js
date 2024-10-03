@@ -1,8 +1,11 @@
 const fs = require('fs');
 const util = require('util');
+const path = require('path');
 
 // Convert fs.readdir into a function that returns a promise (for using async/await consistently)
 const readdir = util.promisify(fs.readdir);
+const rename = util.promisify(fs.rename);
+const remove = util.promisify(fs.rm);
 
 const messages = { error: null, success: null };
 
@@ -57,4 +60,53 @@ async function getFolderContent() {
 	}
 }
 
-module.exports = { getNewFolder, getPreviousFolder, getFolderView };
+async function renameDirectory(req, res) {
+	const newName = req.body.rename;
+	const previousFolder = folderHistory.pop(); // Get the previous folder from the history
+
+	try {
+		if (currentFolder === rootFolder) {
+			await getFolderView(req, res);
+			return;
+		}
+		const newPath = path.join(previousFolder, newName);
+		await rename(currentFolder, newPath);
+		currentFolder = rootFolder;
+		folderHistory = [];
+
+		folderHistory.push(currentFolder);
+
+		await getFolderView(req, res);
+	} catch (err) {
+		console.error('Error renaming directory:', err);
+		res.status(500).send('Error renaming directory: ' + err);
+	}
+}
+
+async function deleteFolder(req, res) {
+	try {
+		if (currentFolder === rootFolder) {
+			await getFolderView(req, res);
+			return;
+		}
+		await remove(currentFolder, { recursive: true, force: true });
+
+		currentFolder = rootFolder;
+
+		folderHistory = [];
+		folderHistory.push(currentFolder);
+
+		await getFolderView(req, res);
+	} catch (err) {
+		console.error('Error deleting folder:', err);
+		res.status(500).send('Error deleting folder: ' + err);
+	}
+}
+
+module.exports = {
+	getNewFolder,
+	getPreviousFolder,
+	getFolderView,
+	renameDirectory,
+	deleteFolder,
+};

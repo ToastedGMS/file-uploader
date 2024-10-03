@@ -14,20 +14,27 @@
 		<!-- Display success message if it exists -->
 		<% if (messages.success) { %>
 		<p class="success-message"><%= messages.success %></p>
-		<% } %> <% if (files && files.length > 0) { %> <% files.forEach(element => {
-		%>
+		<% } %> <% if (files && files.length > 0) { %> <% files.forEach(file => { %>
 		<form action="/folder/selection" method="GET">
-			<input type="hidden" name="folderName" value="<%= element %>" />
-			<button type="submit"><%= element %></button>
+			<input type="hidden" name="folderName" value="<%= file.name %>" />
+			<button type="submit">
+				<% if (file.isFile) { %> <%= file.name %> (File) <% } else { %> <%=
+				file.name %> (Folder) <% } %>
+			</button>
 		</form>
-		<% }) %>
-		<form action="/folder/previous" method="GET">
-			<button type="submit">Previous</button>
+		<% if (file.isFile) { %>
+		<form action="/folder/delete-file" method="post">
+			<input type="hidden" name="fileName" value="<%= file.name %>" />
+			<button type="submit">Delete</button>
+		</form>
+		<% }; %><%})%>
+
+		<!-- Button for previous folder -->
+		<form action="/folder/previous" method="get">
+			<button type="submit">Go to Previous Folder</button>
 		</form>
 		<% } else { %>
-		<div>
-			<p>There's nothing here...</p>
-		</div>
+		<div><p>There's nothing here...</p></div>
 		<form action="/folder/previous" method="GET">
 			<button type="submit">Previous</button>
 		</form>

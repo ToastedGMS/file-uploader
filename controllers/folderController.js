@@ -6,6 +6,8 @@ const path = require('path');
 const readdir = util.promisify(fs.readdir);
 const rename = util.promisify(fs.rename);
 const remove = util.promisify(fs.rm);
+const stat = util.promisify(fs.stat);
+const unlink = util.promisify(fs.unlink);
 
 const messages = { error: null, success: null };
 
@@ -50,11 +52,21 @@ async function getFolderView(req, res) {
 		res.redirect('/login');
 	}
 }
-
 async function getFolderContent() {
 	try {
 		const files = await readdir(currentFolder);
-		return files;
+		const result = [];
+
+		for (const file of files) {
+			try {
+				const stats = await stat(`${currentFolder}/${file}`);
+				result.push({ name: file, isFile: stats.isFile() });
+			} catch (err) {
+				console.error(`Error getting stats for ${file}: ${err}`);
+			}
+		}
+
+		return result;
 	} catch (err) {
 		throw new Error('Unable to read folder: ' + err);
 	}
@@ -103,10 +115,24 @@ async function deleteFolder(req, res) {
 	}
 }
 
+async function deleteFile(req, res) {
+	try {
+		const file = req.body.fileName;
+		const filePath = path.join(currentFolder, file); // Safely join the path
+
+		await unlink(filePath);
+		await getFolderView(req, res);
+	} catch (error) {
+		console.error('Error removing file:', error);
+		res.status(500).send('Error deleting file: ' + err);
+	}
+}
+
 module.exports = {
 	getNewFolder,
 	getPreviousFolder,
 	getFolderView,
 	renameDirectory,
 	deleteFolder,
+	deleteFile,
 };

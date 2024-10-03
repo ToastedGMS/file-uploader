@@ -42,12 +42,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-const homeRoute = require('./routes/home');
-app.use('/', homeRoute);
-const signupRoute = require('./routes/signup');
-app.use('/signup', signupRoute);
 const loginRoute = require('./routes/login');
 app.use('/login', loginRoute);
+app.use('/', loginRoute);
+const signupRoute = require('./routes/signup');
+app.use('/signup', signupRoute);
 const dashboardRoute = require('./routes/dashboard');
 app.use('/dashboard', dashboardRoute);
 const logoutRoute = require('./routes/logout');

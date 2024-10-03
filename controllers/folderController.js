@@ -135,4 +135,5 @@ module.exports = {
 	renameDirectory,
 	deleteFolder,
 	deleteFile,
+	getFolderContent,
 };

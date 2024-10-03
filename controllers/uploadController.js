@@ -1,6 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { getFolderContent } = require('./folderController');
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
@@ -25,8 +26,9 @@ function getUploadView(req, res) {
 }
 
 function handleUploadResponse(req, res) {
-	upload.single('file')(req, res, function (error) {
+	upload.single('file')(req, res, async function (error) {
 		const messages = { error: null, success: null };
+		const files = await getFolderContent();
 
 		if (error) {
 			messages.error = 'Unexpected error occurred.';
@@ -38,23 +40,28 @@ function handleUploadResponse(req, res) {
 		}
 
 		messages.success = `File uploaded successfully: ${req.file.filename} to ${currentFolder}`;
-		return res.render('upload', { messages });
+		return res.render('folder', { messages, files });
 	});
 }
 
 function createFolder(req, res) {
-	fs.mkdir(`${currentFolder}/${req.body.dir}`, { recursive: true }, (err) => {
-		const messages = { error: null, success: null };
+	fs.mkdir(
+		`${currentFolder}/${req.body.dir}`,
+		{ recursive: true },
+		async (err) => {
+			const messages = { error: null, success: null };
+			const files = await getFolderContent();
 
-		if (err) {
-			messages.error = `Error creating folder: ${err.message}`;
-		} else {
-			messages.success = `Folder created successfully: ${currentFolder}/${req.body.dir}`;
+			if (err) {
+				messages.error = `Error creating folder: ${err.message}`;
+			} else {
+				messages.success = `Folder created successfully: ${currentFolder}/${req.body.dir}`;
+			}
+
+			// Pass messages to the 'upload' view
+			return res.render('folder', { messages, files });
 		}
-
-		// Pass messages to the 'upload' view
-		return res.render('upload', { messages });
-	});
+	);
 }
 
 module.exports = {

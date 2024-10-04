@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
+const path = require('path');
 const initialize = require('./config/passport-config');
 const flash = require('connect-flash');
 const { PrismaClient } = require('@prisma/client');
@@ -17,7 +18,7 @@ global.folderHistory = [];
 global.currentFolder = './uploads';
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 // Session setup
 app.use(
 	session({

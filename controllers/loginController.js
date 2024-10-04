@@ -13,13 +13,13 @@ async function logInUser(req, res, next) {
 		}
 		if (!user) {
 			messages.error = info.message;
-			return res.redirect('/login');
+			return res.render('login', { messages });
 		}
 		req.logIn(user, (err) => {
 			if (err) {
 				return next(err);
 			}
-			return res.redirect('/dashboard');
+			return res.redirect('/folder');
 		});
 	})(req, res, next);
 }

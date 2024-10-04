@@ -34,7 +34,7 @@ async function getFolderView(req, res) {
 	if (req.isAuthenticated()) {
 		try {
 			const files = await getFolderContent();
-			res.render('folder', { files });
+			res.render('folder', { files, currentFolder });
 		} catch (err) {
 			if (err.code === 'ENOENT') {
 				currentFolder = './uploads';

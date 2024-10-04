@@ -4,39 +4,32 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>File Upload</title>
-		<style>
-			.error-message {
-				color: red;
-			}
-			.success-message {
-				color: green;
-			}
-		</style>
+		<link rel="stylesheet" href="/css/folders.css" />
+		<!-- Link to the same CSS file -->
 	</head>
 	<body>
 		<h1>Upload a File</h1>
 
 		<!-- Display error message if it exists -->
 		<% if (messages.error) { %>
-		<p class="error-message"><%= messages.error %></p>
+		<p class="message error-message"><%= messages.error %></p>
 		<% } %>
 
 		<!-- Display success message if it exists -->
 		<% if (messages.success) { %>
-		<p class="success-message"><%= messages.success %></p>
+		<p class="message success-message"><%= messages.success %></p>
 		<% } %>
 
 		<form action="/upload" method="POST" enctype="multipart/form-data">
 			<label for="file">Choose a file:</label>
 			<input type="file" id="file" name="file" required />
-			<br /><br />
-			<button type="submit">Upload</button>
+			<button type="submit" class="button">Upload</button>
 		</form>
 
 		<form action="/upload/create-dir" method="POST">
 			<label for="dir">Create Directory</label>
-			<input type="text" name="dir" id="dir" />
-			<button type="submit">Create Folder</button>
+			<input type="text" name="dir" id="dir" required />
+			<button type="submit" class="button">Create Folder</button>
 		</form>
 	</body>
 </html>

@@ -4,71 +4,86 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Folders</title>
-		<style>
-			.error-message {
-				color: red;
-			}
-			.success-message {
-				color: green;
-			}
-		</style>
+		<link rel="stylesheet" href="/css/folders.css" />
+		<!-- Link to your external stylesheet -->
 	</head>
 	<body>
+		<h1>Folders</h1>
+
+		<!-- Breadcrumb Navigation -->
+		<div class="breadcrumb">
+			<p>
+				Current Path: <% if (currentFolder) { %> <%= currentFolder %> <% } else
+				{ %> Root <% } %>
+			</p>
+		</div>
+
 		<!-- Display error message if it exists -->
 		<% if (messages.error) { %>
-		<p class="error-message"><%= messages.error %></p>
+		<p class="message error-message"><%= messages.error %></p>
 		<% } %>
 
 		<!-- Display success message if it exists -->
 		<% if (messages.success) { %>
-		<p class="success-message"><%= messages.success %></p>
-		<% } %> <% if (files && files.length > 0) { %> <% files.forEach(file => { %>
-		<form action="/folder/selection" method="GET">
-			<input type="hidden" name="folderName" value="<%= file.name %>" />
-			<button type="submit">
-				<% if (file.isFile) { %> <%= file.name %> (File) <% } else { %> <%=
-				file.name %> (Folder) <% } %>
-			</button>
-		</form>
-		<% if (file.isFile) { %>
-		<form action="/folder/delete-file" method="post">
-			<input type="hidden" name="fileName" value="<%= file.name %>" />
-			<button type="submit">Delete</button>
-		</form>
-		<% }; %><%})%>
-
-		<!-- Button for previous folder -->
-		<form action="/folder/previous" method="get">
-			<button type="submit">Go to Previous Folder</button>
-		</form>
-		<% } else { %>
-		<div><p>There's nothing here...</p></div>
-		<form action="/folder/previous" method="GET">
-			<button type="submit">Previous</button>
-		</form>
+		<p class="message success-message"><%= messages.success %></p>
 		<% } %>
 
-		<form action="/upload" method="POST" enctype="multipart/form-data">
-			<label for="file">Choose a file:</label>
-			<input type="file" id="file" name="file" required />
-			<br /><br />
-			<button type="submit">Upload</button>
+		<ul class="file-list">
+			<% if (files && files.length > 0) { %> <% files.forEach(file => { %>
+			<li class="file-item">
+				<div class="file-name">
+					<form action="/folder/selection" method="GET">
+						<input type="hidden" name="folderName" value="<%= file.name %>" />
+						<button
+							type="submit"
+							style="border: none; background: none; cursor: pointer"
+						>
+							<%= file.isFile ? file.name + ' (File)' : file.name + ' (Folder)'
+							%>
+						</button>
+					</form>
+				</div>
+				<div class="file-actions">
+					<% if (file.isFile) { %>
+					<form action="/folder/delete-file" method="post">
+						<input type="hidden" name="fileName" value="<%= file.name %>" />
+						<button type="submit" class="button">Delete</button>
+					</form>
+					<% } %>
+				</div>
+			</li>
+			<% }) %> <% } else { %>
+			<div><p>There's nothing here...</p></div>
+			<% } %>
+		</ul>
+
+		<form action="/folder/previous" method="GET">
+			<button type="submit" class="button">Go to Previous Folder</button>
 		</form>
 
-		<form action="/upload/create-dir" method="POST">
-			<label for="dir">Create Directory</label>
-			<input type="text" name="dir" id="dir" />
-			<button type="submit">Create Folder</button>
-		</form>
+		<div class="upload-section">
+			<h2>Upload Section</h2>
+			<form action="/upload" method="POST" enctype="multipart/form-data">
+				<label for="file">Choose a file:</label>
+				<input type="file" id="file" name="file" required />
+				<button type="submit" class="button">Upload</button>
+			</form>
 
-		<form action="/folder/rename-dir" method="post">
-			<label for="rename">New Folder Name</label>
-			<input type="text" name="rename" id="rename" />
-			<button type="submit">Rename</button>
-		</form>
+			<form action="/upload/create-dir" method="POST">
+				<label for="dir">Create Directory</label>
+				<input type="text" name="dir" id="dir" required />
+				<button type="submit" class="button">Create Folder</button>
+			</form>
 
-		<form action="/folder/remove-dir" method="post">
-			<button type="submit">Delete Folder</button>
-		</form>
+			<form action="/folder/rename-dir" method="post">
+				<label for="rename">New Folder Name</label>
+				<input type="text" name="rename" id="rename" required />
+				<button type="submit" class="button">Rename</button>
+			</form>
+
+			<form action="/folder/remove-dir" method="post">
+				<button type="submit" class="button">Delete Folder</button>
+			</form>
+		</div>
 	</body>
 </html>

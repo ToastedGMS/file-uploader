@@ -8,6 +8,7 @@ const flash = require('connect-flash');
 const { PrismaClient } = require('@prisma/client');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const prisma = new PrismaClient();
+module.exports = { prisma };
 
 const app = express();
 initialize(passport, prisma);

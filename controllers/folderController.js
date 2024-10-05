@@ -21,6 +21,7 @@ async function getNewFolder(req, res) {
 
 async function getPreviousFolder(req, res) {
 	// Check if there's a previous folder in the stack
+
 	if (folderHistory.length > 0) {
 		// Pop the last folder from the stack and set it as the current folder
 		currentFolder = folderHistory.pop();
@@ -37,11 +38,11 @@ async function getFolderView(req, res) {
 			res.render('folder', { files, currentFolder });
 		} catch (err) {
 			if (err.code === 'ENOENT') {
-				currentFolder = './uploads';
+				currentFolder = rootFolder;
 				folderHistory = []; // Clear the folder history
 				return await getFolderView(req, res);
 			} else if (err.code === 'ENOTDIR') {
-				currentFolder = './uploads';
+				currentFolder = rootFolder;
 				folderHistory = []; // Clear the folder history
 				return await getFolderView(req, res);
 			} else {

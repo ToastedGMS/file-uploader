@@ -5,12 +5,27 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Folders</title>
 		<link rel="stylesheet" href="/css/folders.css" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+			integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+
 		<!-- Link to your external stylesheet -->
 	</head>
 	<body>
-		<h1>Folders</h1>
+		<header>
+			<h1>Folders</h1>
+			<nav>
+				<ul>
+					<li><a href="/logout">Logout</a></li>
+					<!-- Navigation link to logout -->
+				</ul>
+			</nav>
+		</header>
 
-		<!-- Breadcrumb Navigation -->
 		<div class="breadcrumb">
 			<p>
 				Current Path: <% if (currentFolder) { %> <%= currentFolder %> <% } else
@@ -36,10 +51,22 @@
 						<input type="hidden" name="folderName" value="<%= file.name %>" />
 						<button
 							type="submit"
-							style="border: none; background: none; cursor: pointer"
+							style="
+								border: none;
+								background: none;
+								cursor: pointer;
+								display: flex;
+								align-items: center;
+							"
 						>
-							<%= file.isFile ? file.name + ' (File)' : file.name + ' (Folder)'
-							%>
+							<% if (file.isFile) { %>
+							<i class="fa-regular fa-file" style="margin-right: 5px"></i>
+							<%= file.name %> <% } else { %>
+							<i
+								class="fa-regular fa-folder-open"
+								style="margin-right: 5px"
+							></i>
+							<%= file.name %> <% } %>
 						</button>
 					</form>
 				</div>
@@ -76,13 +103,13 @@
 			</form>
 
 			<form action="/folder/rename-dir" method="post">
-				<label for="rename">New Folder Name</label>
+				<label for="rename">Rename Current Folder</label>
 				<input type="text" name="rename" id="rename" required />
 				<button type="submit" class="button">Rename</button>
 			</form>
 
 			<form action="/folder/remove-dir" method="post">
-				<button type="submit" class="button">Delete Folder</button>
+				<button type="submit" class="button">Delete Current Folder</button>
 			</form>
 		</div>
 	</body>

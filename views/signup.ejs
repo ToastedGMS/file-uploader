@@ -4,15 +4,17 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Sign Up</title>
+		<link rel="stylesheet" href="/css/folders.css" />
+		<!-- Link to the same CSS file -->
 	</head>
 	<body>
 		<div class="container">
 			<h1>Sign Up</h1>
 
 			<% if (messages.error) { %>
-			<div style="color: red"><%= messages.error %></div>
+			<p class="message error-message"><%= messages.error %></p>
 			<% } %> <% if (messages.success) { %>
-			<div style="color: green"><%= messages.success %></div>
+			<p class="message success-message"><%= messages.success %></p>
 			<% } %>
 
 			<form action="/signup" method="POST">
@@ -31,7 +33,7 @@
 					<input type="password" id="password2" name="password2" required />
 				</div>
 
-				<button type="submit">Sign Up</button>
+				<button type="submit" class="button">Sign Up</button>
 			</form>
 
 			<p>Already have an account? <a href="/login">Log in here</a></p>

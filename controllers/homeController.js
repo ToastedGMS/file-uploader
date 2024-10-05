@@ -1,5 +1,5 @@
 function getHomeView(req, res) {
-	res.render('home');
+	res.redirect('/folder');
 }
 
 module.exports = { getHomeView };

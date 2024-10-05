@@ -1,6 +1,6 @@
 function getDashboardView(req, res) {
 	if (req.isAuthenticated()) {
-		return res.render('dashboard');
+		return res.redirect('/folder');
 	} else {
 		return res.redirect('/login');
 	}

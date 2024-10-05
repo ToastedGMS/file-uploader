@@ -19,6 +19,8 @@ async function logInUser(req, res, next) {
 			if (err) {
 				return next(err);
 			}
+			rootFolder = `${currentFolder}/${user.id}`;
+			currentFolder = rootFolder;
 			return res.redirect('/folder');
 		});
 	})(req, res, next);

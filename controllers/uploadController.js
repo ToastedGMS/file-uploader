@@ -5,7 +5,7 @@ const { getFolderContent } = require('./folderController');
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
-		cb(null, currentFolder);
+		cb(null, req.session.currentFolder);
 	},
 	filename: (req, file, cb) => {
 		const ext = path.extname(file.originalname); // Original file extension
@@ -27,8 +27,10 @@ function getUploadView(req, res) {
 
 function handleUploadResponse(req, res) {
 	upload.single('file')(req, res, async function (error) {
+		const currentFolder = req.session.currentFolder;
+
 		const messages = { error: null, success: null };
-		const files = await getFolderContent();
+		const files = await getFolderContent(`${currentFolder}`);
 
 		if (error) {
 			messages.error = 'Unexpected error occurred.';
@@ -39,27 +41,28 @@ function handleUploadResponse(req, res) {
 			return res.render('upload', { messages });
 		}
 
-		messages.success = `File uploaded successfully: ${req.file.filename} to ${currentFolder}`;
-		return res.render('folder', { messages, files });
+		messages.success = `File uploaded successfully: ${req.file.filename} to ${req.session.currentFolder}`;
+		return res.render('folder', { messages, files, currentFolder });
 	});
 }
 
 function createFolder(req, res) {
 	fs.mkdir(
-		`${currentFolder}/${req.body.dir}`,
+		`${req.session.currentFolder}/${req.body.dir}`,
 		{ recursive: true },
 		async (err) => {
+			const currentFolder = req.session.currentFolder;
 			const messages = { error: null, success: null };
-			const files = await getFolderContent();
+			const files = await getFolderContent(`${currentFolder}`);
 
 			if (err) {
 				messages.error = `Error creating folder: ${err.message}`;
 			} else {
-				messages.success = `Folder created successfully: ${currentFolder}/${req.body.dir}`;
+				messages.success = `Folder created successfully: ${req.session.currentFolder}/${req.body.dir}`;
 			}
 
 			// Pass messages to the 'upload' view
-			return res.render('folder', { messages, files });
+			return res.render('folder', { messages, files, currentFolder });
 		}
 	);
 }

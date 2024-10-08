@@ -1,12 +1,11 @@
 const passport = require('passport');
+const messages = { error: null, success: null };
 
 function getLoginView(req, res) {
-	res.render('login');
+	res.render('login', { messages });
 }
 
 async function logInUser(req, res, next) {
-	const messages = { error: null, success: null };
-
 	passport.authenticate('local', (err, user, info) => {
 		if (err) {
 			return next(err);
@@ -19,8 +18,11 @@ async function logInUser(req, res, next) {
 			if (err) {
 				return next(err);
 			}
-			rootFolder = `${currentFolder}/${user.id}`;
-			currentFolder = rootFolder;
+
+			req.session.rootFolder = `./uploads/${user.id}`;
+			req.session.folderHistory = [];
+			req.session.currentFolder = `./uploads/${user.id}`;
+
 			return res.redirect('/folder');
 		});
 	})(req, res, next);

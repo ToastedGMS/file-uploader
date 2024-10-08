@@ -4,7 +4,6 @@ const session = require('express-session');
 const passport = require('passport');
 const path = require('path');
 const initialize = require('./config/passport-config');
-const flash = require('connect-flash');
 const { PrismaClient } = require('@prisma/client');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const prisma = new PrismaClient();
@@ -14,9 +13,6 @@ const app = express();
 initialize(passport, prisma);
 
 // Middleware
-global.rootFolder = './uploads';
-global.folderHistory = [];
-global.currentFolder = './uploads';
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -33,11 +29,6 @@ app.use(
 		}),
 	})
 );
-app.use(flash());
-app.use((req, res, next) => {
-	res.locals.messages = req.flash();
-	next();
-});
 
 // Passport setup
 app.use(passport.initialize());

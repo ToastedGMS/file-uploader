@@ -30,7 +30,13 @@ async function logInUser(req, res, next) {
 
 			req.session.folderHistory = [];
 
-			return res.redirect('/folder');
+			req.session.save((err) => {
+				if (err) {
+					return next(err);
+				}
+				// Redirect to folder view after session is saved
+				return res.redirect('/folder');
+			});
 		});
 	})(req, res, next);
 }

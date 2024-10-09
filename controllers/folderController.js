@@ -128,6 +128,24 @@ async function deleteFile(req, res) {
 	}
 }
 
+function downloadFile(req, res) {
+	// Get the file name from the query or request params
+	const fileName = req.query.fileName;
+
+	// Assuming files are stored in the 'uploads' directory
+	const directoryPath = path.join(__dirname, '../', req.session.currentFolder);
+	const filePath = path.join(directoryPath, fileName);
+
+	// Serve the file using res.download
+	res.download(filePath, (err) => {
+		if (err) {
+			console.error('Error downloading the file:', err);
+			return res.status(500).send('Error downloading file');
+		}
+		console.log('Download Completed');
+	});
+}
+
 module.exports = {
 	getNewFolder,
 	getPreviousFolder,
@@ -136,4 +154,5 @@ module.exports = {
 	deleteFolder,
 	deleteFile,
 	getFolderContent,
+	downloadFile,
 };

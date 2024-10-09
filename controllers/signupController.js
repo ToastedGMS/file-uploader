@@ -18,7 +18,7 @@ async function createUser(req, res) {
 
 	try {
 		const newUser = await addUserToDatabase(email, password);
-		const newFolder = `./uploads/${newUser.id}`;
+		const newFolder = path.join(__dirname, 'uploads', String(newUser.id));
 
 		// Create the folder asynchronously using the promisified version of mkdir
 		await mkdir(newFolder);

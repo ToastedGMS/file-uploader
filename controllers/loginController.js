@@ -1,5 +1,6 @@
 const passport = require('passport');
 const messages = { error: null, success: null };
+const path = require('path');
 
 function getLoginView(req, res) {
 	res.render('login', { messages });
@@ -19,9 +20,15 @@ async function logInUser(req, res, next) {
 				return next(err);
 			}
 
-			req.session.rootFolder = `./uploads/${user.id}`;
+			req.session.rootFolder = path.join(
+				__dirname,
+				'..',
+				'uploads',
+				`${user.id}`
+			);
+			req.session.currentFolder = req.session.rootFolder; // Same as above
+
 			req.session.folderHistory = [];
-			req.session.currentFolder = `./uploads/${user.id}`;
 
 			return res.redirect('/folder');
 		});

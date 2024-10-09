@@ -14,7 +14,10 @@ const messages = { error: null, success: null };
 async function getNewFolder(req, res) {
 	// Push the current folder onto the stack before navigating
 	req.session.folderHistory.push(req.session.currentFolder);
-	req.session.currentFolder = `${req.session.currentFolder}/${req.query.folderName}`;
+	req.session.currentFolder = path.join(
+		req.session.currentFolder,
+		req.query.folderName
+	);
 
 	await getFolderView(req, res);
 }
@@ -22,9 +25,11 @@ async function getNewFolder(req, res) {
 async function getPreviousFolder(req, res) {
 	// Check if there's a previous folder in the stack
 
-	if (req.session.folderHistory.length > 1) {
+	if (req.session.folderHistory.length > 0) {
 		// Pop the last folder from the stack and set it as the current folder
 		req.session.currentFolder = req.session.folderHistory.pop();
+	} else {
+		console.log('Error getting previous folder');
 	}
 
 	await getFolderView(req, res);
@@ -58,7 +63,7 @@ async function getFolderContent(currentFolder) {
 
 		for (const file of files) {
 			try {
-				const stats = await stat(`${currentFolder}/${file}`);
+				const stats = await stat(path.join(currentFolder, file));
 				result.push({ name: file, isFile: stats.isFile() });
 			} catch (err) {
 				console.error(`Error getting stats for ${file}: ${err}`);
@@ -133,7 +138,7 @@ function downloadFile(req, res) {
 	const fileName = req.query.fileName;
 
 	// Assuming files are stored in the 'uploads' directory
-	const directoryPath = path.join(__dirname, '../', req.session.currentFolder);
+	const directoryPath = path.join(req.session.currentFolder);
 	const filePath = path.join(directoryPath, fileName);
 
 	// Serve the file using res.download

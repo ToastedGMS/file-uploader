@@ -6,6 +6,7 @@ const {
 	deleteFolder,
 	deleteFile,
 	downloadFile,
+	createFolder,
 } = require('../controllers/folderController');
 
 const router = require('express').Router();
@@ -19,6 +20,8 @@ router.get('/previous', getPreviousFolder);
 router.post('/rename-dir', renameDirectory);
 
 router.post('/remove-dir', deleteFolder);
+
+router.post('/create-dir', createFolder);
 
 router.post('/delete-file', deleteFile);
 

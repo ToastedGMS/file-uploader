@@ -119,6 +119,24 @@ async function deleteFolder(req, res) {
 		res.status(500).send('Error deleting folder: ' + err);
 	}
 }
+function createFolder(req, res) {
+	const newFolderPath = path.join(req.session.currentFolder, req.body.dir);
+
+	fs.mkdir(newFolderPath, { recursive: true }, async (err) => {
+		const currentFolder = req.session.currentFolder;
+		const messages = { error: null, success: null };
+		const files = await getFolderContent(`${currentFolder}`);
+
+		if (err) {
+			messages.error = `Error creating folder: ${err.message}`;
+		} else {
+			messages.success = `Folder created successfully: ${newFolderPath}`;
+		}
+
+		// Pass messages to the 'upload' view
+		return res.render('folder', { messages, files, currentFolder });
+	});
+}
 
 async function deleteFile(req, res) {
 	try {
@@ -160,4 +178,5 @@ module.exports = {
 	deleteFile,
 	getFolderContent,
 	downloadFile,
+	createFolder,
 };

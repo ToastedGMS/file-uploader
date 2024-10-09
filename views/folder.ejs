@@ -76,6 +76,10 @@
 						<input type="hidden" name="fileName" value="<%= file.name %>" />
 						<button type="submit" class="button">Delete</button>
 					</form>
+					<form action="/folder/download-file" method="get">
+						<input type="hidden" name="fileName" value="<%= file.name %>" />
+						<button type="submit" class="button">Download</button>
+					</form>
 					<% } %>
 				</div>
 			</li>

@@ -6,8 +6,13 @@ const path = require('path');
 const initialize = require('./config/passport-config');
 const { PrismaClient } = require('@prisma/client');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
+const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient(
+	'https://jwqmjvlaovemvdhssynj.supabase.co',
+	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3cW1qdmxhb3ZlbXZkaHNzeW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgwNzY3MDUsImV4cCI6MjA0MzY1MjcwNX0.e25cUNQ9FypZyuFbsZqMC5tzNR3LI0ekhZrMCG9QwE8'
+);
 const prisma = new PrismaClient();
-module.exports = { prisma };
+module.exports = { prisma, supabase };
 
 const app = express();
 initialize(passport, prisma);

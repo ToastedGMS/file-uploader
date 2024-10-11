@@ -2,6 +2,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { getFolderContent } = require('./folderController');
+const { supabase } = require('..');
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
@@ -25,10 +26,9 @@ function getUploadView(req, res) {
 	}
 }
 
-function handleUploadResponse(req, res) {
+async function handleUploadResponse(req, res) {
 	upload.single('file')(req, res, async function (error) {
 		const currentFolder = req.session.currentFolder;
-
 		const messages = { error: null, success: null };
 		const files = await getFolderContent(`${currentFolder}`);
 
@@ -41,7 +41,23 @@ function handleUploadResponse(req, res) {
 			return res.render('upload', { messages });
 		}
 
-		messages.success = `File uploaded successfully: ${req.file.filename} to ${req.session.currentFolder}`;
+		// Upload file to Supabase storage
+		const { originalname, path: filePath, mimetype } = req.file;
+		const fileContent = fs.readFileSync(filePath);
+
+		const { data, error: uploadError } = await supabase.storage
+			.from('bababooey')
+			.upload(`${currentFolder}/${originalname}`, fileContent, {
+				contentType: mimetype,
+			});
+
+		if (uploadError) {
+			messages.error = 'Failed to upload file to Supabase.';
+			console.log(uploadError);
+			return res.render('upload', { messages });
+		}
+
+		messages.success = `File uploaded successfully to Supabase: ${data.path}`;
 		return res.render('folder', { messages, files, currentFolder });
 	});
 }

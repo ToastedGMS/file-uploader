@@ -6,13 +6,20 @@ const path = require('path');
 const initialize = require('./config/passport-config');
 const { PrismaClient } = require('@prisma/client');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
-const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(
-	'https://jwqmjvlaovemvdhssynj.supabase.co',
-	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3cW1qdmxhb3ZlbXZkaHNzeW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgwNzY3MDUsImV4cCI6MjA0MzY1MjcwNX0.e25cUNQ9FypZyuFbsZqMC5tzNR3LI0ekhZrMCG9QwE8'
-);
+const admin = require('firebase-admin');
+const { getStorage } = require('firebase-admin/storage');
+const fs = require('fs');
+const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+
+admin.initializeApp({
+	credential: admin.credential.cert(serviceAccount),
+	storageBucket: 'gs://file-uploader42069.appspot.com', // Replace with your bucket name
+});
+const bucket = getStorage().bucket();
+
 const prisma = new PrismaClient();
-module.exports = { prisma, supabase };
+module.exports = { prisma, bucket, serviceAccount };
 
 const app = express();
 initialize(passport, prisma);

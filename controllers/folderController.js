@@ -1,6 +1,8 @@
 const fs = require('fs');
 const util = require('util');
 const path = require('path');
+const { Storage } = require('@google-cloud/storage');
+const { serviceAccount } = require('..');
 
 // Convert fs.readdir into a function that returns a promise (for using async/await consistently)
 const readdir = util.promisify(fs.readdir);
@@ -140,33 +142,62 @@ function createFolder(req, res) {
 
 async function deleteFile(req, res) {
 	try {
-		const file = req.body.fileName;
-		const filePath = path.join(req.session.currentFolder, file); // Safely join the path
+		const fileName = req.body.fileName;
 
-		await unlink(filePath);
+		const storage = new Storage({
+			projectId: 'file-uploader42069', // Replace with your project ID
+			credentials: serviceAccount,
+		});
+		const bucket = storage.bucket('file-uploader42069.appspot.com'); // Replace with your bucket name
+		const fileRef = bucket.file(fileName); // Use only the original file name
+
+		// Delete the file from Firebase Storage
+		await fileRef.delete();
+		try {
+			const filePath = path.join(req.session.currentFolder, fileName); // Safely join the path
+
+			await unlink(filePath); // remove file from local storage
+		} catch (error) {
+			console.error('Error removing file:', error);
+			res.status(500).send('Error deleting file: ' + err);
+		}
+
+		// After deleting, update the folder view
 		await getFolderView(req, res);
 	} catch (error) {
-		console.error('Error removing file:', error);
-		res.status(500).send('Error deleting file: ' + err);
+		console.error('Error deleting file from Firebase Storage:', error);
+		res.status(500).send('Error deleting file: ' + error.message);
 	}
 }
 
-function downloadFile(req, res) {
-	// Get the file name from the query or request params
-	const fileName = req.query.fileName;
+async function downloadFile(req, res) {
+	try {
+		const fileName = req.query.fileName;
 
-	// Assuming files are stored in the 'uploads' directory
-	const directoryPath = path.join(req.session.currentFolder);
-	const filePath = path.join(directoryPath, fileName);
+		const storage = new Storage({
+			projectId: 'file-uploader42069', // Replace with your project ID
+			credentials: serviceAccount,
+		});
+		const bucket = storage.bucket('file-uploader42069.appspot.com'); // Replace with your bucket name
+		const fileRef = bucket.file(fileName); // Use only the original file name
 
-	// Serve the file using res.download
-	res.download(filePath, (err) => {
-		if (err) {
-			console.error('Error downloading the file:', err);
-			return res.status(500).send('Error downloading file');
-		}
-		console.log('Download Completed');
-	});
+		// Fetch file metadata to get contentType
+		const [metadata] = await fileRef.getMetadata();
+		const contentType = metadata.contentType || 'application/octet-stream'; // Default to binary if undefined
+
+		// Download the file from Firebase Storage
+		const [data] = await fileRef.download();
+
+		// Set the response headers for download
+		res.setHeader('Content-Type', contentType);
+		res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+
+		// Send the file data to the client
+		res.send(data);
+	} catch (error) {
+		console.error('Error downloading file:', error);
+		res.status(500).send('Error downloading file: ' + error);
+	}
 }
 
 module.exports = {
